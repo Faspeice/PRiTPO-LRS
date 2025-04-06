@@ -1,8 +1,10 @@
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.*;
 
 public class Main {
-    public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
+    public static void main(String[] args) throws FileNotFoundException {
+        Scanner scanner = new Scanner(new File("4/static/testcases.txt"));
         List<String> inputLines = new ArrayList<>();
         while (scanner.hasNextLine()) {
             String line = scanner.nextLine().trim();

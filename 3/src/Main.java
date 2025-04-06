@@ -1,79 +1,84 @@
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.*;
 
 public class Main {
-    public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
-        List<String> inputLines = new ArrayList<>();
-        while (scanner.hasNextLine()) {
-            String line = scanner.nextLine().trim();
-            if (line.isEmpty()) break;
-            inputLines.add(line);
+    private static final int[] dx = {-1, -1, -1, 0, 0, 1, 1, 1};
+    private static final int[] dy = {-1, 0, 1, -1, 1, -1, 0, 1};
+
+    public static void main(String[] args) throws FileNotFoundException {
+        Scanner scanner = new Scanner(new File("3/static/testcases.txt"));
+        int testCases = Integer.parseInt(scanner.nextLine().trim());
+        scanner.nextLine();
+
+        for (int t = 0; t < testCases; t++) {
+            if (t > 0) System.out.println();
+
+            int rows = scanner.nextInt();
+            scanner.nextLine();
+
+            char[][] grid = readGrid(scanner, rows);
+            int wordCount = Integer.parseInt(scanner.nextLine().trim());
+            List<String> words = readWords(scanner, wordCount);
+
+            for (String word : words) {
+                int[] position = findWord(grid, word.toLowerCase());
+                System.out.println(position[0] + " " + position[1]);
+            }
+
+            if (scanner.hasNextLine()) scanner.nextLine();
         }
+
         scanner.close();
-
-        List<String> outputLines = new ArrayList<>();
-        for (String line : inputLines) {
-            int[] stack = parseStack(line);
-            List<Integer> flips = pancakeSort(stack);
-            outputLines.add(line + " 0 " + formatFlips(flips));
-        }
-
-        for (String output : outputLines) {
-            System.out.println(output);
-        }
     }
 
-    private static int[] parseStack(String line) {
-        String[] tokens = line.split("\\s+");
-        int[] stack = new int[tokens.length];
-        for (int i = 0; i < tokens.length; i++) {
-            stack[i] = Integer.parseInt(tokens[i]);
+    private static char[][] readGrid(Scanner scanner, int rows) {
+        char[][] grid = new char[rows][];
+        for (int i = 0; i < rows; i++) {
+            grid[i] = scanner.nextLine().trim().toLowerCase().toCharArray();
         }
-        return stack;
+        return grid;
     }
 
-    private static List<Integer> pancakeSort(int[] origStack) {
-        int n = origStack.length;
-        int[] stack = Arrays.copyOf(origStack, n);
-        List<Integer> flips = new ArrayList<>();
+    private static List<String> readWords(Scanner scanner, int count) {
+        List<String> words = new ArrayList<>();
+        for (int i = 0; i < count; i++) {
+            words.add(scanner.nextLine().trim());
+        }
+        return words;
+    }
 
-        for (int currSize = n; currSize > 1; currSize--) {
-            int maxIndex = findMaxIndex(stack, currSize);
-            if (maxIndex != currSize - 1) {
-                if (maxIndex != 0) {
-                    flips.add(n - maxIndex);
-                    flip(stack, maxIndex);
+    private static int[] findWord(char[][] grid, String word) {
+        int m = grid.length;
+        int n = grid[0].length;
+
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < n; j++) {
+                if (startsWith(grid, i, j, word)) {
+                    return new int[]{i + 1, j + 1};
                 }
-                flips.add(n - (currSize - 1));
-                flip(stack, currSize - 1);
             }
         }
-        flips.add(0);
-        return flips;
+
+        return new int[]{-1, -1};
     }
 
-    private static int findMaxIndex(int[] stack, int limit) {
-        int maxIndex = 0;
-        for (int i = 1; i < limit; i++) {
-            if (stack[i] > stack[maxIndex]) {
-                maxIndex = i;
+    private static boolean startsWith(char[][] grid, int x, int y, String word) {
+        int m = grid.length;
+        int n = grid[0].length;
+
+        for (int dir = 0; dir < 8; dir++) {
+            int i = x, j = y, k;
+            for (k = 0; k < word.length(); k++) {
+                if (i < 0 || i >= m || j < 0 || j >= n || grid[i][j] != word.charAt(k)) {
+                    break;
+                }
+                i += dx[dir];
+                j += dy[dir];
             }
+            if (k == word.length()) return true;
         }
-        return maxIndex;
-    }
 
-    private static void flip(int[] stack, int r) {
-        int i = 0, j = r;
-        while (i < j) {
-            int temp = stack[i];
-            stack[i] = stack[j];
-            stack[j] = temp;
-            i++;
-            j--;
-        }
-    }
-
-    private static String formatFlips(List<Integer> flips) {
-        return String.join(" ", flips.stream().map(String::valueOf).toArray(String[]::new));
+        return false;
     }
 }

@@ -1,9 +1,11 @@
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.*;
 
 public class Main {
 
-    public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
+    public static void main(String[] args) throws FileNotFoundException {
+        Scanner scanner = new Scanner(new File("2/static/testcases.txt"));
         int testCasesQuantity = Integer.parseInt(scanner.nextLine().trim());
         scanner.nextLine();
 

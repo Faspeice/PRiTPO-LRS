@@ -1,15 +1,17 @@
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.*;
 import java.math.BigInteger;
 
 public class Main {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws FileNotFoundException {
         List<String> inputLines = readInput();
         List<String> outputLines = processInput(inputLines);
         printOutput(outputLines);
     }
 
-    private static List<String> readInput() {
-        Scanner scanner = new Scanner(System.in);
+    private static List<String> readInput() throws FileNotFoundException {
+        Scanner scanner = new Scanner(new File("5/static/testcases.txt"));
         List<String> inputLines = new ArrayList<>();
         while (scanner.hasNextLine()) {
             String line = scanner.nextLine().trim();
@@ -42,6 +44,7 @@ public class Main {
             if (powerStr.length() > 2 * nLength && powerStr.startsWith(n)) {
                 return String.valueOf(e);
             }
+
         }
         return "no power of 2";
     }
@@ -50,3 +53,4 @@ public class Main {
         return BigInteger.TWO.pow(exponent).toString();
     }
 }
+
